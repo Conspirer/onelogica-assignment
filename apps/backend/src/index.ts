@@ -11,10 +11,12 @@ import { initializeFirebaseAdmin } from "./auth/firebase.js";
 async function buildServer() {
   const app = Fastify({ logger: true });
 
-  await app.register(cors, {
-    origin: env.FRONTEND_ORIGIN,
-    credentials: true,
-  });
+await app.register(cors, {
+  origin: env.FRONTEND_ORIGIN,
+  credentials: true,
+  methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+});
 
   await app.register(websocket);
 

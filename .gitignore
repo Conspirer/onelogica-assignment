@@ -7,3 +7,7 @@ npm-debug.log*
 dist
 coverage
 .DS_Store
+# Firebase secrets
+apps/backend/secrets/
+apps/backend/.env
+apps/frontend/.env.local

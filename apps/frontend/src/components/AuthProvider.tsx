@@ -104,26 +104,31 @@ export function AuthProvider({ children }: PropsWithChildren) {
     return () => unsubscribe();
   }, [firebaseAuth]);
 
-  const createMockSession = (email: string, name: string) => {
-    const cleanName = name || email.split("@")[0] || "User";
-    const uid = `dev-${cleanName.toLowerCase().replace(/[^a-z0-9]/g, "") || "user"}`;
-    const token = `dev-token:${uid}:${email}:${encodeURIComponent(cleanName)}`;
-    const mockUser = {
-      uid,
-      email,
-      displayName: cleanName,
-      getIdToken: async () => token,
-    } as unknown as User;
+const createMockSession = (email: string, name: string) => {
+  const normalizedEmail = email.trim().toLowerCase();
+  const cleanName = name || normalizedEmail.split("@")[0] || "User";
 
-    localStorage.setItem(
-      "onelogica_mock_user",
-      JSON.stringify({ uid, email, displayName: cleanName, token }),
-    );
-    setSessionCookie(token);
-    setUser(mockUser);
-    setLoading(false);
-    return mockUser;
-  };
+  // Use email instead of display name so the user's ID stays consistent.
+  const uid = `dev-${normalizedEmail.replace(/[^a-z0-9]/g, "") || "user"}`;
+  const token = `dev-token:${uid}:${normalizedEmail}:${encodeURIComponent(cleanName)}`;
+
+  const mockUser = {
+    uid,
+    email: normalizedEmail,
+    displayName: cleanName,
+    getIdToken: async () => token,
+  } as unknown as User;
+
+  localStorage.setItem(
+    "onelogica_mock_user",
+    JSON.stringify({ uid, email: normalizedEmail, displayName: cleanName, token }),
+  );
+
+  setSessionCookie(token);
+  setUser(mockUser);
+  setLoading(false);
+  return mockUser;
+};
 
   const value = useMemo<AuthContextValue>(
     () => ({

@@ -460,7 +460,13 @@ export async function registerDiagramRoutes(app: FastifyInstance) {
     }
 
     // Find or create target collaborator user record by email
-    const targetUser = await ensureUserRecord(`invited-${payload.email}`, payload.email, payload.email.split("@")[0]);
+const normalizedEmail = payload.email.trim().toLowerCase();
+
+const targetUser = await ensureUserRecord(
+  `dev-${normalizedEmail.replace(/[^a-z0-9]/g, "") || "user"}`,
+  normalizedEmail,
+  normalizedEmail.split("@")[0],
+);
 
     await db.query(
       `
