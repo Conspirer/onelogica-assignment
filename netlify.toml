@@ -1,7 +1,7 @@
 [build]
-  base = "apps/frontend"
-  publish = ".next"
-  command = "npm run build"
+  base = "."
+  command = "npm --workspace @onelogica/shared-types run build && npm --workspace @onelogica/frontend run build"
+  publish = "apps/frontend/.next"
 
 [build.environment]
   NODE_VERSION = "20"
@@ -9,17 +9,3 @@
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
-
-# Proxy REST API requests to backend service or tunnel
-[[redirects]]
-  from = "/api/*"
-  to = "https://backend.onelogica.dev/api/:splat"
-  status = 200
-  force = false
-
-# Fallback for SPA routing
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-  force = false
