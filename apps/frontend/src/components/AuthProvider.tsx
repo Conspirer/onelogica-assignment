@@ -62,12 +62,22 @@ function getStoredMockUser(): User | null {
 
 export function AuthProvider({ children }: PropsWithChildren) {
   const firebaseAuth = getFirebaseAuth();
-  const [user, setUser] = useState<User | null>(() => getStoredMockUser());
-  const [loading, setLoading] = useState(() => Boolean(firebaseAuth && !getStoredMockUser()));
+  // Start with null to prevent SSR / Client hydration mismatch
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!firebaseAuth) {
+    // Populate stored user after mounting on client
+    const stored = getStoredMockUser();
+    if (stored) {
+      setUser(stored);
+      setSessionCookie(stored.uid);
       setLoading(false);
+    } else if (!firebaseAuth) {
+      setLoading(false);
+    }
+
+    if (!firebaseAuth) {
       return;
     }
 
@@ -111,6 +121,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     );
     setSessionCookie(token);
     setUser(mockUser);
+    setLoading(false);
     return mockUser;
   };
 
@@ -173,6 +184,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
       },
       getIdToken: async () => {
         if (!user) {
+          const stored = getStoredMockUser();
+          if (stored) {
+            return stored.getIdToken();
+          }
           return null;
         }
         return user.getIdToken();

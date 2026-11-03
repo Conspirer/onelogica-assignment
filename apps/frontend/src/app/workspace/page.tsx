@@ -15,6 +15,7 @@ type DiagramSummary = {
 
 export default function WorkspaceHomePage() {
   const { user, loading, logout } = useAuth();
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const [diagrams, setDiagrams] = useState<DiagramSummary[]>([]);
   const [state, setState] = useState("loading");
@@ -22,6 +23,10 @@ export default function WorkspaceHomePage() {
   const [newTitle, setNewTitle] = useState("");
   const [newDescription, setNewDescription] = useState("");
   const [isCreating, setIsCreating] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const loadDiagrams = async () => {
     try {
@@ -34,15 +39,17 @@ export default function WorkspaceHomePage() {
   };
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.replace("/login");
+    if (!mounted || loading) {
       return;
     }
 
-    if (user) {
-      void loadDiagrams();
+    if (!user) {
+      window.location.href = "/login";
+      return;
     }
-  }, [loading, router, user]);
+
+    void loadDiagrams();
+  }, [mounted, loading, user]);
 
   const handleCreateDiagram = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,7 +69,7 @@ export default function WorkspaceHomePage() {
     }
   };
 
-  if (loading || !user) {
+  if (!mounted || loading || !user) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-50">
         <p className="text-sm text-slate-600">Verifying authentication...</p>
@@ -91,7 +98,7 @@ export default function WorkspaceHomePage() {
               setNewDescription("Kubernetes, API Gateway, and Distributed DBs");
               setShowCreateModal(true);
             }}
-            className="rounded-xl bg-cyan-700 px-4 py-2 text-xs font-semibold text-white hover:bg-cyan-800 shadow-sm transition"
+            className="cursor-pointer rounded-xl bg-cyan-700 px-4 py-2 text-xs font-semibold text-white hover:bg-cyan-800 shadow-sm transition"
           >
             + New Diagram
           </button>
@@ -99,9 +106,9 @@ export default function WorkspaceHomePage() {
             type="button"
             onClick={async () => {
               await logout();
-              router.push("/login");
+              window.location.href = "/login";
             }}
-            className="rounded-xl border border-slate-300 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+            className="cursor-pointer rounded-xl border border-slate-300 px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
           >
             Logout
           </button>
@@ -156,7 +163,7 @@ export default function WorkspaceHomePage() {
             <button
               type="button"
               onClick={() => setShowCreateModal(true)}
-              className="mt-4 rounded-xl bg-cyan-700 px-4 py-2 text-xs font-semibold text-white hover:bg-cyan-800 shadow-sm"
+              className="mt-4 cursor-pointer rounded-xl bg-cyan-700 px-4 py-2 text-xs font-semibold text-white hover:bg-cyan-800 shadow-sm"
             >
               + Create First Diagram
             </button>
@@ -173,7 +180,7 @@ export default function WorkspaceHomePage() {
               <button
                 type="button"
                 onClick={() => setShowCreateModal(false)}
-                className="text-slate-400 hover:text-slate-600 font-semibold"
+                className="cursor-pointer text-slate-400 hover:text-slate-600 font-semibold"
               >
                 ✕
               </button>
@@ -207,14 +214,14 @@ export default function WorkspaceHomePage() {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="rounded-lg border border-slate-300 px-4 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100"
+                  className="cursor-pointer rounded-lg border border-slate-300 px-4 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isCreating}
-                  className="rounded-lg bg-cyan-700 px-4 py-1.5 text-xs font-semibold text-white hover:bg-cyan-800 disabled:opacity-50 shadow-sm"
+                  className="cursor-pointer rounded-lg bg-cyan-700 px-4 py-1.5 text-xs font-semibold text-white hover:bg-cyan-800 disabled:opacity-50 shadow-sm"
                 >
                   {isCreating ? "Creating..." : "Create & Open"}
                 </button>

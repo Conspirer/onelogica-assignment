@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, use, useEffect } from "react";
+import { Suspense, use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { CollaborativeWorkspace } from "@/components/CollaborativeWorkspace";
@@ -14,15 +14,24 @@ function WorkspacePageContent({
   const resolvedParams = "then" in params ? use(params) : params;
   const diagramId = resolvedParams.diagramId;
   const { user, loading, logout } = useAuth();
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.replace("/login");
-    }
-  }, [loading, router, user]);
+    setMounted(true);
+  }, []);
 
-  if (loading || !user) {
+  useEffect(() => {
+    if (!mounted || loading) {
+      return;
+    }
+
+    if (!user) {
+      window.location.href = "/login";
+    }
+  }, [mounted, loading, user]);
+
+  if (!mounted || loading || !user) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-50">
         <p className="text-sm text-slate-600">Verifying session...</p>
@@ -55,9 +64,9 @@ function WorkspacePageContent({
             type="button"
             onClick={async () => {
               await logout();
-              router.push("/login");
+              window.location.href = "/login";
             }}
-            className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+            className="cursor-pointer rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50"
           >
             Logout
           </button>
