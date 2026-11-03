@@ -1,0 +1,23 @@
+# Cloudflare Tunnel Configuration
+# Usage:
+#   cloudflared tunnel --config infra/tunnel/cloudflared.yml run onelogica-tunnel
+# Or quick temporary tunnel:
+#   cloudflared tunnel --url http://localhost:8080
+
+tunnel: onelogica-tunnel
+credentials-file: /etc/cloudflared/credentials.json
+
+ingress:
+  # Fastify REST API & WebSockets Gateway
+  - hostname: api.onelogica.yourdomain.com
+    service: http://localhost:8080
+    originRequest:
+      noTLSVerify: true
+      connectTimeout: 30s
+      tcpKeepAlive: 30s
+
+  # Health Check
+  - hostname: health.onelogica.yourdomain.com
+    service: http://localhost:8080/health
+
+  - service: http_status:404

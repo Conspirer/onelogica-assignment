@@ -1,0 +1,36 @@
+{
+  "name": "onelogica",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Collaborative architecture and workflow designer",
+  "scripts": {
+    "dev:frontend": "npm --workspace @onelogica/frontend run dev",
+    "dev:backend": "npm --workspace @onelogica/backend run dev",
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "build": "npm run build:frontend && npm run build:backend",
+    "build:frontend": "npm --workspace @onelogica/frontend run build",
+    "build:backend": "npm --workspace @onelogica/backend run build",
+    "lint": "npm run lint:frontend && npm run lint:backend",
+    "lint:frontend": "npm --workspace @onelogica/frontend run lint",
+    "lint:backend": "npm --workspace @onelogica/backend run lint",
+    "test": "npm run test:frontend && npm run test:backend",
+    "test:frontend": "npm --workspace @onelogica/frontend run test",
+    "test:backend": "npm --workspace @onelogica/backend run test"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "keywords": [
+    "collaboration",
+    "diagrams",
+    "nextjs",
+    "websocket"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "prisma": "^8.0.0-rc.29"
+  }
+}

@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum DiagramRole {
+  OWNER
+  EDITOR
+  VIEWER
+}
+
+model User {
+  id          String              @id @default(cuid())
+  firebaseUid String              @unique
+  email       String?
+  displayName String?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  owned       Diagram[]
+  permissions DiagramPermission[]
+  versions    DiagramVersion[]
+  opBatches   DiagramOperationBatch[]
+}
+
+model Diagram {
+  id          String                 @id @default(cuid())
+  title       String
+  description String?
+  ownerId     String
+  data        Json
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+  owner       User                   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  permissions DiagramPermission[]
+  versions    DiagramVersion[]
+  opBatches   DiagramOperationBatch[]
+}
+
+model DiagramPermission {
+  id        String      @id @default(cuid())
+  diagramId String
+  userId    String
+  role      DiagramRole
+  createdAt DateTime    @default(now())
+  diagram   Diagram     @relation(fields: [diagramId], references: [id], onDelete: Cascade)
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([diagramId, userId])
+  @@index([userId])
+}
+
+model DiagramVersion {
+  id          String   @id @default(cuid())
+  diagramId   String
+  actorId     String
+  label       String
+  snapshot    Json
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  diagram     Diagram  @relation(fields: [diagramId], references: [id], onDelete: Cascade)
+  actor       User     @relation(fields: [actorId], references: [id], onDelete: Cascade)
+
+  @@index([diagramId, createdAt])
+}
+
+model DiagramOperationBatch {
+  id          String   @id @default(cuid())
+  diagramId   String
+  actorId     String
+  operations  Json
+  createdAt   DateTime @default(now())
+  diagram     Diagram  @relation(fields: [diagramId], references: [id], onDelete: Cascade)
+  actor       User     @relation(fields: [actorId], references: [id], onDelete: Cascade)
+
+  @@index([diagramId, createdAt])
+}
