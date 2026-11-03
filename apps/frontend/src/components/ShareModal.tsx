@@ -105,12 +105,12 @@ export function ShareModal({ diagramId, isOpen, onClose }: ShareModalProps) {
               placeholder="collaborator@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="flex-1 rounded-lg border border-slate-300 px-3 py-1.5 text-xs focus:border-cyan-500 focus:outline-hidden"
+              className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-cyan-500 focus:outline-hidden"
             />
             <select
               value={role}
               onChange={(e) => setRole(e.target.value as "EDITOR" | "VIEWER")}
-              className="rounded-lg border border-slate-300 px-2 py-1.5 text-xs focus:border-cyan-500 focus:outline-hidden"
+              className="rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-xs font-medium text-slate-900 focus:border-cyan-500 focus:outline-hidden"
             >
               <option value="EDITOR">Editor</option>
               <option value="VIEWER">Viewer</option>

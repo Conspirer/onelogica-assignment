@@ -82,7 +82,7 @@ function InspectorPanelComponent({
             value={(selectedEdge.label as string) || ""}
             onChange={(e) => onUpdateEdge(selectedEdge.id, e.target.value, selectedEdge.type || "smoothstep")}
             placeholder="e.g. gRPC / Kafka / HTTP"
-            className="rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs focus:border-cyan-500 focus:outline-hidden"
+            className="rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-cyan-500 focus:outline-hidden"
           />
         </div>
 
@@ -91,7 +91,7 @@ function InspectorPanelComponent({
           <select
             value={selectedEdge.type || "smoothstep"}
             onChange={(e) => onUpdateEdge(selectedEdge.id, (selectedEdge.label as string) || "", e.target.value)}
-            className="rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs focus:border-cyan-500 focus:outline-hidden"
+            className="rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-900 focus:border-cyan-500 focus:outline-hidden"
           >
             <option value="smoothstep">SmoothStep (Orthogonal)</option>
             <option value="bezier">Bezier (Curved)</option>
@@ -128,7 +128,7 @@ function InspectorPanelComponent({
           type="text"
           value={data.label || ""}
           onChange={(e) => onUpdateNode(selectedNode!.id, { label: e.target.value })}
-          className="rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs focus:border-cyan-500 focus:outline-hidden"
+          className="rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-cyan-500 focus:outline-hidden"
         />
       </div>
 
@@ -139,7 +139,7 @@ function InspectorPanelComponent({
           rows={2}
           value={data.description || ""}
           onChange={(e) => onUpdateNode(selectedNode!.id, { description: e.target.value })}
-          className="rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs focus:border-cyan-500 focus:outline-hidden resize-none"
+          className="rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-cyan-500 focus:outline-hidden resize-none"
         />
       </div>
 
@@ -149,7 +149,7 @@ function InspectorPanelComponent({
         <select
           value={data.shape || "rectangle"}
           onChange={(e) => onUpdateNode(selectedNode!.id, { shape: e.target.value as ShapeType })}
-          className="rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs focus:border-cyan-500 focus:outline-hidden"
+          className="rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-900 focus:border-cyan-500 focus:outline-hidden"
         >
           <option value="rectangle">Rectangle (Microservice)</option>
           <option value="rounded">Rounded Pill (Client/UI)</option>

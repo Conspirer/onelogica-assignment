@@ -133,7 +133,7 @@ export function VersionHistoryModal({
             placeholder="Version name (e.g. Pre-migration architecture)"
             value={snapshotLabel}
             onChange={(e) => setSnapshotLabel(e.target.value)}
-            className="flex-1 rounded-lg border border-slate-300 px-3 py-1.5 text-xs focus:border-cyan-500 focus:outline-hidden"
+            className="flex-1 rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-cyan-500 focus:outline-hidden"
           />
           <button
             type="submit"

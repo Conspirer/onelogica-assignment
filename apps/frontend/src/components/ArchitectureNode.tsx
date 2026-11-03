@@ -4,6 +4,44 @@ import { memo } from "react";
 import { Handle, Position, NodeResizer, type NodeProps } from "reactflow";
 import type { CustomNodeData } from "@onelogica/shared-types";
 
+function NodeHandles({ borderColor }: { borderColor: string }) {
+  const baseStyle: React.CSSProperties = {
+    background: borderColor,
+    width: 10,
+    height: 10,
+    border: "2px solid #ffffff",
+    borderRadius: "50%",
+    zIndex: 20,
+    cursor: "crosshair",
+  };
+
+  const overlayStyle: React.CSSProperties = {
+    ...baseStyle,
+    background: "transparent",
+    border: "none",
+  };
+
+  return (
+    <>
+      {/* Top Handle (Bidirectional Source & Target with unique IDs) */}
+      <Handle type="target" position={Position.Top} id="top-target" style={baseStyle} />
+      <Handle type="source" position={Position.Top} id="top-source" style={overlayStyle} />
+
+      {/* Right Handle (Bidirectional Source & Target with unique IDs) */}
+      <Handle type="target" position={Position.Right} id="right-target" style={overlayStyle} />
+      <Handle type="source" position={Position.Right} id="right-source" style={baseStyle} />
+
+      {/* Bottom Handle (Bidirectional Source & Target with unique IDs) */}
+      <Handle type="target" position={Position.Bottom} id="bottom-target" style={overlayStyle} />
+      <Handle type="source" position={Position.Bottom} id="bottom-source" style={baseStyle} />
+
+      {/* Left Handle (Bidirectional Source & Target with unique IDs) */}
+      <Handle type="target" position={Position.Left} id="left-target" style={baseStyle} />
+      <Handle type="source" position={Position.Left} id="left-source" style={overlayStyle} />
+    </>
+  );
+}
+
 function ArchitectureNodeComponent({ data, selected }: NodeProps<CustomNodeData>) {
   const shape = data.shape || "rectangle";
   const label = data.label || "Node";
@@ -13,15 +51,6 @@ function ArchitectureNodeComponent({ data, selected }: NodeProps<CustomNodeData>
   const textColor = data.textColor || "#0f172a";
   const rotation = data.rotation || 0;
   const isContainer = data.isContainer || shape === "container";
-
-  // Common handle styles
-  const handleStyle = {
-    background: borderColor,
-    width: 8,
-    height: 8,
-    border: "2px solid #ffffff",
-    borderRadius: "50%",
-  };
 
   const transformStyle = rotation ? `rotate(${rotation}deg)` : undefined;
 
@@ -51,10 +80,7 @@ function ArchitectureNodeComponent({ data, selected }: NodeProps<CustomNodeData>
           ) : null}
         </div>
 
-        <Handle type="target" position={Position.Top} style={handleStyle} />
-        <Handle type="source" position={Position.Bottom} style={handleStyle} />
-        <Handle type="target" position={Position.Left} style={handleStyle} />
-        <Handle type="source" position={Position.Right} style={handleStyle} />
+        <NodeHandles borderColor={borderColor} />
       </div>
     );
   }
@@ -86,10 +112,7 @@ function ArchitectureNodeComponent({ data, selected }: NodeProps<CustomNodeData>
           </div>
         </div>
 
-        <Handle type="target" position={Position.Top} style={handleStyle} />
-        <Handle type="source" position={Position.Right} style={handleStyle} />
-        <Handle type="source" position={Position.Bottom} style={handleStyle} />
-        <Handle type="target" position={Position.Left} style={handleStyle} />
+        <NodeHandles borderColor={borderColor} />
       </div>
     );
   }
@@ -137,10 +160,7 @@ function ArchitectureNodeComponent({ data, selected }: NodeProps<CustomNodeData>
           )}
         </div>
 
-        <Handle type="target" position={Position.Top} style={handleStyle} />
-        <Handle type="source" position={Position.Right} style={handleStyle} />
-        <Handle type="source" position={Position.Bottom} style={handleStyle} />
-        <Handle type="target" position={Position.Left} style={handleStyle} />
+        <NodeHandles borderColor={borderColor} />
       </div>
     );
   }
@@ -181,10 +201,7 @@ function ArchitectureNodeComponent({ data, selected }: NodeProps<CustomNodeData>
           )}
         </div>
 
-        <Handle type="target" position={Position.Top} style={handleStyle} />
-        <Handle type="source" position={Position.Right} style={handleStyle} />
-        <Handle type="source" position={Position.Bottom} style={handleStyle} />
-        <Handle type="target" position={Position.Left} style={handleStyle} />
+        <NodeHandles borderColor={borderColor} />
       </div>
     );
   }
@@ -215,10 +232,7 @@ function ArchitectureNodeComponent({ data, selected }: NodeProps<CustomNodeData>
         )}
       </div>
 
-      <Handle type="target" position={Position.Top} style={handleStyle} />
-      <Handle type="source" position={Position.Right} style={handleStyle} />
-      <Handle type="source" position={Position.Bottom} style={handleStyle} />
-      <Handle type="target" position={Position.Left} style={handleStyle} />
+      <NodeHandles borderColor={borderColor} />
     </div>
   );
 }

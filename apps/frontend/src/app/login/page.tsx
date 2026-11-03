@@ -101,7 +101,7 @@ export default function LoginPage() {
           <div>
             <label className="text-xs font-semibold text-slate-700">Email Address</label>
             <input
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-cyan-500 focus:outline-hidden"
+              className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:border-cyan-500 focus:outline-hidden"
               type="email"
               required
               placeholder="engineer@company.com"
@@ -113,7 +113,7 @@ export default function LoginPage() {
           <div>
             <label className="text-xs font-semibold text-slate-700">Password</label>
             <input
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-cyan-500 focus:outline-hidden"
+              className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:border-cyan-500 focus:outline-hidden"
               type="password"
               required
               placeholder="••••••••"

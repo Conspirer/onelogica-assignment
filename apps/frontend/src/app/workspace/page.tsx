@@ -195,7 +195,7 @@ export default function WorkspaceHomePage() {
                   placeholder="e.g. Microservices Event-Driven Pipeline"
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:border-cyan-500 focus:outline-hidden"
+                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-cyan-500 focus:outline-hidden"
                 />
               </div>
 
@@ -206,7 +206,7 @@ export default function WorkspaceHomePage() {
                   placeholder="e.g. System workflow between Next.js client, Fastify gateway, Redis pub/sub, and PostgreSQL storage."
                   value={newDescription}
                   onChange={(e) => setNewDescription(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-xs focus:border-cyan-500 focus:outline-hidden resize-none"
+                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:border-cyan-500 focus:outline-hidden resize-none"
                 />
               </div>
 
