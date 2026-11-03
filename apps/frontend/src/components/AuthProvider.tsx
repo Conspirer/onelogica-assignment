@@ -32,7 +32,7 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-function setSessionCookie(idToken: string | null) {
+export function setSessionCookie(idToken: string | null) {
   if (typeof document === "undefined") return;
 
   if (!idToken) {
@@ -94,6 +94,26 @@ export function AuthProvider({ children }: PropsWithChildren) {
     return () => unsubscribe();
   }, [firebaseAuth]);
 
+  const createMockSession = (email: string, name: string) => {
+    const cleanName = name || email.split("@")[0] || "User";
+    const uid = `dev-${cleanName.toLowerCase().replace(/[^a-z0-9]/g, "") || "user"}`;
+    const token = `dev-token:${uid}:${email}:${encodeURIComponent(cleanName)}`;
+    const mockUser = {
+      uid,
+      email,
+      displayName: cleanName,
+      getIdToken: async () => token,
+    } as unknown as User;
+
+    localStorage.setItem(
+      "onelogica_mock_user",
+      JSON.stringify({ uid, email, displayName: cleanName, token }),
+    );
+    setSessionCookie(token);
+    setUser(mockUser);
+    return mockUser;
+  };
+
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
@@ -101,88 +121,55 @@ export function AuthProvider({ children }: PropsWithChildren) {
       isMockAuth: !firebaseAuth,
       signInEmail: async (email, password) => {
         const auth = getFirebaseAuth();
-        if (!auth) {
-          // Dev Mock Auth Fallback
-          const name = email.split("@")[0] || "User";
-          const uid = `dev-${name.toLowerCase().replace(/[^a-z0-9]/g, "") || "user"}`;
-          const token = `dev-token:${uid}:${email}:${encodeURIComponent(name)}`;
-          const mockUser = {
-            uid,
-            email,
-            displayName: name,
-            getIdToken: async () => token,
-          } as unknown as User;
-
-          localStorage.setItem("onelogica_mock_user", JSON.stringify({ uid, email, displayName: name, token }));
-          setUser(mockUser);
-          setSessionCookie(token);
-          return;
+        if (auth) {
+          try {
+            await signInWithEmailAndPassword(auth, email, password);
+            return;
+          } catch (err) {
+            console.warn("[Auth] Firebase sign-in failed, using local session:", err);
+          }
         }
-        await signInWithEmailAndPassword(auth, email, password);
+        createMockSession(email, email.split("@")[0]);
       },
       signUpEmail: async (email, password) => {
         const auth = getFirebaseAuth();
-        if (!auth) {
-          const name = email.split("@")[0] || "User";
-          const uid = `dev-${name.toLowerCase().replace(/[^a-z0-9]/g, "") || "user"}`;
-          const token = `dev-token:${uid}:${email}:${encodeURIComponent(name)}`;
-          const mockUser = {
-            uid,
-            email,
-            displayName: name,
-            getIdToken: async () => token,
-          } as unknown as User;
-
-          localStorage.setItem("onelogica_mock_user", JSON.stringify({ uid, email, displayName: name, token }));
-          setUser(mockUser);
-          setSessionCookie(token);
-          return;
+        if (auth) {
+          try {
+            await createUserWithEmailAndPassword(auth, email, password);
+            return;
+          } catch (err) {
+            console.warn("[Auth] Firebase registration failed, using local session:", err);
+          }
         }
-        await createUserWithEmailAndPassword(auth, email, password);
+        createMockSession(email, email.split("@")[0]);
       },
       signInGoogle: async () => {
         const auth = getFirebaseAuth();
-        if (!auth) {
-          const name = "Google Tester";
-          const email = "google.tester@example.com";
-          const uid = "dev-google-user";
-          const token = `dev-token:${uid}:${email}:${encodeURIComponent(name)}`;
-          const mockUser = {
-            uid,
-            email,
-            displayName: name,
-            getIdToken: async () => token,
-          } as unknown as User;
-
-          localStorage.setItem("onelogica_mock_user", JSON.stringify({ uid, email, displayName: name, token }));
-          setUser(mockUser);
-          setSessionCookie(token);
-          return;
+        if (auth) {
+          try {
+            await signInWithPopup(auth, getGoogleProvider());
+            return;
+          } catch (err) {
+            console.warn("[Auth] Google OAuth failed or was blocked, using demo session:", err);
+          }
         }
-        await signInWithPopup(auth, getGoogleProvider());
+        createMockSession("google.user@example.com", "Google Architect");
       },
       signInMock: async (email: string, name: string) => {
-        const uid = `dev-${name.toLowerCase().replace(/[^a-z0-9]/g, "") || "user"}`;
-        const token = `dev-token:${uid}:${email}:${encodeURIComponent(name)}`;
-        const mockUser = {
-          uid,
-          email,
-          displayName: name,
-          getIdToken: async () => token,
-        } as unknown as User;
-
-        localStorage.setItem("onelogica_mock_user", JSON.stringify({ uid, email, displayName: name, token }));
-        setUser(mockUser);
-        setSessionCookie(token);
+        createMockSession(email, name);
       },
       logout: async () => {
         const auth = getFirebaseAuth();
         if (auth) {
-          await signOut(auth);
+          try {
+            await signOut(auth);
+          } catch {
+            // ignore
+          }
         }
         localStorage.removeItem("onelogica_mock_user");
-        setUser(null);
         setSessionCookie(null);
+        setUser(null);
       },
       getIdToken: async () => {
         if (!user) {

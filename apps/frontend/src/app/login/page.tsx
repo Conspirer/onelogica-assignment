@@ -1,12 +1,10 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const { signInEmail, signUpEmail, signInGoogle, signInMock, isMockAuth } = useAuth();
+  const { signInEmail, signUpEmail, signInGoogle, signInMock } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -19,13 +17,64 @@ export default function LoginPage() {
 
     try {
       await signInEmail(email, password);
-      router.push("/workspace");
+      window.location.href = "/workspace";
     } catch {
       setError("Could not sign in with email/password.");
-    } finally {
       setLoading(false);
     }
   }
+
+  const handleRegister = async () => {
+    if (!email || !password) {
+      setError("Please provide an email and password to register.");
+      return;
+    }
+    setError(null);
+    setLoading(true);
+    try {
+      await signUpEmail(email, password);
+      window.location.href = "/workspace";
+    } catch {
+      setError("Could not register account.");
+      setLoading(false);
+    }
+  };
+
+  const handleGoogle = async () => {
+    setError(null);
+    setLoading(true);
+    try {
+      await signInGoogle();
+      window.location.href = "/workspace";
+    } catch {
+      setError("Google sign-in failed.");
+      setLoading(false);
+    }
+  };
+
+  const handleAlice = async () => {
+    setError(null);
+    setLoading(true);
+    try {
+      await signInMock("alice@example.com", "Alice (Architect)");
+      window.location.href = "/workspace";
+    } catch {
+      setError("Could not sign in as Alice.");
+      setLoading(false);
+    }
+  };
+
+  const handleBob = async () => {
+    setError(null);
+    setLoading(true);
+    try {
+      await signInMock("bob@example.com", "Bob (Engineer)");
+      window.location.href = "/workspace";
+    } catch {
+      setError("Could not sign in as Bob.");
+      setLoading(false);
+    }
+  };
 
   return (
     <main className="mx-auto flex w-full max-w-md flex-col gap-5 px-6 py-16">
@@ -77,27 +126,16 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-lg bg-cyan-700 py-2.5 text-sm font-semibold text-white hover:bg-cyan-800 shadow-2xs disabled:opacity-50"
+              className="w-full cursor-pointer rounded-lg bg-cyan-700 py-2.5 text-sm font-semibold text-white hover:bg-cyan-800 shadow-2xs disabled:opacity-50"
             >
-              Sign In
+              {loading ? "Signing in..." : "Sign In"}
             </button>
 
             <button
               type="button"
               disabled={loading}
-              onClick={async () => {
-                setError(null);
-                setLoading(true);
-                try {
-                  await signUpEmail(email, password);
-                  router.push("/workspace");
-                } catch {
-                  setError("Could not register account.");
-                } finally {
-                  setLoading(false);
-                }
-              }}
-              className="w-full rounded-lg border border-slate-300 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+              onClick={handleRegister}
+              className="w-full cursor-pointer rounded-lg border border-slate-300 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
             >
               Register New Account
             </button>
@@ -114,19 +152,8 @@ export default function LoginPage() {
             <button
               type="button"
               disabled={loading}
-              onClick={async () => {
-                setError(null);
-                setLoading(true);
-                try {
-                  await signInGoogle();
-                  router.push("/workspace");
-                } catch {
-                  setError("Google sign-in failed.");
-                } finally {
-                  setLoading(false);
-                }
-              }}
-              className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-300 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+              onClick={handleGoogle}
+              className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-slate-300 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
             >
               <svg className="h-4 w-4" viewBox="0 0 24 24">
                 <path
@@ -162,21 +189,17 @@ export default function LoginPage() {
           <div className="mt-2.5 flex gap-2">
             <button
               type="button"
-              onClick={async () => {
-                await signInMock("alice@example.com", "Alice (Architect)");
-                router.push("/workspace");
-              }}
-              className="flex-1 rounded-lg border border-cyan-300 bg-white py-1.5 text-xs font-semibold text-cyan-900 hover:bg-cyan-50 shadow-2xs"
+              disabled={loading}
+              onClick={handleAlice}
+              className="flex-1 cursor-pointer rounded-lg border border-cyan-300 bg-white py-1.5 text-xs font-semibold text-cyan-900 hover:bg-cyan-50 shadow-2xs"
             >
               Sign in as Alice
             </button>
             <button
               type="button"
-              onClick={async () => {
-                await signInMock("bob@example.com", "Bob (Engineer)");
-                router.push("/workspace");
-              }}
-              className="flex-1 rounded-lg border border-cyan-300 bg-white py-1.5 text-xs font-semibold text-cyan-900 hover:bg-cyan-50 shadow-2xs"
+              disabled={loading}
+              onClick={handleBob}
+              className="flex-1 cursor-pointer rounded-lg border border-cyan-300 bg-white py-1.5 text-xs font-semibold text-cyan-900 hover:bg-cyan-50 shadow-2xs"
             >
               Sign in as Bob
             </button>

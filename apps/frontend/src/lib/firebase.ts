@@ -9,7 +9,12 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-function hasFirebaseConfig() {
+export function hasFirebaseConfig() {
+  const key = firebaseConfig.apiKey;
+  // If keys are missing or still placeholder values from .env.example, return false
+  if (!key || key === "your-api-key" || key.includes("your-") || key.length < 10) {
+    return false;
+  }
   return Boolean(
     firebaseConfig.apiKey &&
       firebaseConfig.authDomain &&
@@ -27,8 +32,13 @@ export function getFirebaseAuth() {
   }
 
   if (!authInstance) {
-    const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-    authInstance = getAuth(app);
+    try {
+      const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+      authInstance = getAuth(app);
+    } catch (error) {
+      console.warn("[Firebase] Could not initialize Firebase client, using local auth:", error);
+      return null;
+    }
   }
 
   return authInstance;
